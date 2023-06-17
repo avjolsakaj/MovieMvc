@@ -20,12 +20,12 @@ public class HomeController : Controller
             new MovieViewModel
             {
                 Id = 1,
-                Name = "Fast X"
+                Title = "Fast X"
             },
             new MovieViewModel
             {
                 Id = 2,
-                Name = "The shining"
+                Title = "The shining"
             }
         };
 

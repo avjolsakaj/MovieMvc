@@ -11,14 +11,14 @@
     <ul>
         @foreach (var movie in (List<MovieViewModel>)ViewData["Movies"])
         {
-            <li>@movie.Id @movie.Name</li>
+            <li>@movie.Id @movie.Title</li>
         }
     </ul>
 
     <ul>
         @foreach (var movie in (List<MovieViewModel>)ViewBag.Movies)
         {
-            <li>@movie.Id @movie.Name</li>
+            <li>@movie.Id @movie.Title</li>
         }
     </ul>
 </div>
