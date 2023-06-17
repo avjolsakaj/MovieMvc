@@ -30,9 +30,18 @@ public class MoviesController : Controller
     }
 
     // GET: MoviesController/Details/5
-    public ActionResult Details (int id)
+    public async Task<IActionResult> Details (int id)
     {
-        return View();
+        var movie = await _context.Movies.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (movie == null)
+        {
+            return NotFound();
+        }
+
+        var result = movie.Map();
+
+        return View(result);
     }
 
     // GET: MoviesController/Create
