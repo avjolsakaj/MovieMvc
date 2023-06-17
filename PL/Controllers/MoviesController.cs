@@ -1,6 +1,7 @@
 ﻿using DAL.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PL.Converters;
 
 namespace PL.Controllers;
 
@@ -18,7 +19,14 @@ public class MoviesController : Controller
     {
         var movies = await _context.Movies.ToListAsync();
 
-        return View(movies);
+        if (movies == null)
+        {
+            return Problem("Could not get movies from database!");
+        }
+
+        var result = movies.ConvertAll(x => x.Map());
+
+        return View(result);
     }
 
     // GET: MoviesController/Details/5

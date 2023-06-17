@@ -1,3 +1,59 @@
-﻿<div>
-    Movie index works
-</div>
+﻿@model IEnumerable<MovieViewModel>
+
+@{
+    ViewData["Title"] = "List Movies";
+}
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(x => x.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.ReleaseDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.Genre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.Rating)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movie in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(x => movie.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(x => movie.ReleaseDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(x => movie.Genre)
+                </td>
+                <td>
+                    @Html.DisplayFor(x => movie.Price) LEK
+                </td>
+                <td>
+                    @Html.DisplayFor(x => movie.Rating)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@movie.Id">Edit</a>
+                    <a asp-action="Details" asp-route-id="@movie.Id">Details</a>
+                    <a asp-action="Delete" asp-route-id="@movie.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
