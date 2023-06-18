@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PL.Converters;
+using PL.Models;
 
 namespace PL.Controllers;
 
@@ -32,7 +33,7 @@ public class MoviesController : Controller
     // GET: MoviesController/Details/5
     public async Task<IActionResult> Details (int id)
     {
-        var movie = await _context.Movies.FirstOrDefaultAsync(x => x.Id == id);
+        var movie = await _context.Movies.FindAsync(id);
 
         if (movie == null)
         {
@@ -66,24 +67,53 @@ public class MoviesController : Controller
     }
 
     // GET: MoviesController/Edit/5
-    public ActionResult Edit (int id)
+    public async Task<IActionResult> Edit (int id)
     {
-        return View();
+        var movie = await _context.Movies.FindAsync(id);
+
+        if (movie == null)
+        {
+            return NotFound();
+        }
+
+        var result = movie.Map();
+
+        return View(result);
     }
 
     // POST: MoviesController/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit (int id, IFormCollection collection)
+    public async Task<IActionResult> Edit (int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] MovieViewModel request)
     {
-        try
+        if (id != request.Id)
         {
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
-        catch
+
+        if (!ModelState.IsValid)
         {
-            return View();
+            return View(request);
         }
+
+        var movie = await _context.Movies.FindAsync(id);
+
+        if (movie == null)
+        {
+            return NotFound();
+        }
+
+        // Update movie
+        movie.Title = request.Title;
+        movie.ReleaseDate = request.ReleaseDate;
+        movie.Genre = request.Genre;
+        movie.Price = request.Price;
+        movie.Rating = request.Rating;
+
+        // Save database
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: MoviesController/Delete/5
