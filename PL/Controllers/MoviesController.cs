@@ -48,22 +48,40 @@ public class MoviesController : Controller
     // GET: MoviesController/Create
     public ActionResult Create ()
     {
-        return View();
+        var model = new MovieViewModel
+        {
+            ReleaseDate = DateTime.Now,
+            Price = 0,
+            Rating = 0,
+        };
+
+        return View(model);
     }
 
     // POST: MoviesController/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Create (IFormCollection collection)
+    public async Task<IActionResult> Create ([Bind("Title, ReleaseDate, Genre, Price, Rating")] MovieViewModel request)
     {
-        try
+        if (!ModelState.IsValid)
         {
-            return RedirectToAction(nameof(Index));
+            return View(request);
         }
-        catch
+
+        var movieToCreate = new DAL.Entities.Movie
         {
-            return View();
-        }
+            Title = request.Title,
+            ReleaseDate = request.ReleaseDate,
+            Genre = request.Genre,
+            Price = request.Price,
+            Rating = request.Rating
+        };
+
+        _ = _context.Movies.Add(movieToCreate);
+
+        _ = await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: MoviesController/Edit/5
