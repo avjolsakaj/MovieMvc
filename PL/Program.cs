@@ -1,4 +1,6 @@
 using DAL.Context;
+using DAL.Implementation;
+using DAL.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<MovieMVCContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultDB")));
+
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 
 var app = builder.Build();
 

@@ -1,6 +1,5 @@
-﻿using DAL.Context;
+﻿using DAL.Interface;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PL.Converters;
 using PL.Models;
 
@@ -8,17 +7,17 @@ namespace PL.Controllers;
 
 public class MoviesController : Controller
 {
-    private readonly MovieMVCContext _context;
+    private readonly IMovieRepository _movieRepository;
 
-    public MoviesController (MovieMVCContext context)
+    public MoviesController (IMovieRepository movieRepository)
     {
-        _context = context;
+        _movieRepository = movieRepository;
     }
 
     // GET: MoviesController
     public async Task<IActionResult> Index ()
     {
-        var movies = await _context.Movies.ToListAsync();
+        var movies = await _movieRepository.GetAll();
 
         if (movies == null)
         {
@@ -33,7 +32,7 @@ public class MoviesController : Controller
     // GET: MoviesController/Details/5
     public async Task<IActionResult> Details (int id)
     {
-        var movie = await _context.Movies.FindAsync(id);
+        var movie = await _movieRepository.Get(id);
 
         if (movie == null)
         {
@@ -52,7 +51,7 @@ public class MoviesController : Controller
         {
             ReleaseDate = DateTime.Now,
             Price = 0,
-            Rating = 0,
+            Rating = 0
         };
 
         return View(model);
@@ -77,9 +76,9 @@ public class MoviesController : Controller
             Rating = request.Rating
         };
 
-        _ = _context.Movies.Add(movieToCreate);
+        _ = _movieRepository.Add(movieToCreate);
 
-        _ = await _context.SaveChangesAsync();
+        _ = await _movieRepository.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
@@ -87,7 +86,7 @@ public class MoviesController : Controller
     // GET: MoviesController/Edit/5
     public async Task<IActionResult> Edit (int id)
     {
-        var movie = await _context.Movies.FindAsync(id);
+        var movie = await _movieRepository.Get(id);
 
         if (movie == null)
         {
@@ -114,7 +113,7 @@ public class MoviesController : Controller
             return View(request);
         }
 
-        var movie = await _context.Movies.FindAsync(id);
+        var movie = await _movieRepository.Get(id);
 
         if (movie == null)
         {
@@ -129,29 +128,47 @@ public class MoviesController : Controller
         movie.Rating = request.Rating;
 
         // Save database
-        await _context.SaveChangesAsync();
+        _ = await _movieRepository.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
 
     // GET: MoviesController/Delete/5
-    public ActionResult Delete (int id)
+    public async Task<IActionResult> Delete (int id)
     {
-        return View();
+        var movie = await _movieRepository.Get(id);
+
+        if (movie == null)
+        {
+            return NotFound();
+        }
+
+        var result = movie.Map();
+
+        return View(result);
     }
 
     // POST: MoviesController/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Delete (int id, IFormCollection collection)
+    public async Task<IActionResult> Delete (int id, [Bind("Id")] MovieViewModel request)
     {
-        try
+        if (id != request.Id)
+        {
+            return NotFound();
+        }
+
+        var movie = await _movieRepository.Get(id);
+
+        if (movie == null)
         {
             return RedirectToAction(nameof(Index));
         }
-        catch
-        {
-            return View();
-        }
+
+        _movieRepository.Delete(movie);
+
+        _ = await _movieRepository.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
     }
 }
