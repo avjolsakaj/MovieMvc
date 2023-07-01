@@ -1,10 +1,12 @@
 ﻿using DAL.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PL.Converters;
 using PL.Models;
 
 namespace PL.Controllers;
 
+[Authorize]
 public class MoviesController : Controller
 {
     private readonly IMovieRepository _movieRepository;
@@ -15,6 +17,7 @@ public class MoviesController : Controller
     }
 
     // GET: MoviesController
+    [AllowAnonymous]
     public async Task<IActionResult> Index (string searchString, string genreSearch)
     {
         var movies = await _movieRepository.GetAll(searchString, genreSearch);
@@ -30,6 +33,7 @@ public class MoviesController : Controller
     }
 
     // GET: MoviesController/Details/5
+    [AllowAnonymous]
     public async Task<IActionResult> Details (int id)
     {
         var movie = await _movieRepository.Get(id);

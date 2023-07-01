@@ -1,6 +1,7 @@
 using DAL.Context;
 using DAL.Implementation;
 using DAL.Interface;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 builder.Services.AddDbContext<MovieMVCContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultDB")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<MovieMVCContext>();
 
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 
@@ -28,10 +34,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();

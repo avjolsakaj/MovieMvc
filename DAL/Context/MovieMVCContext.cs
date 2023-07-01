@@ -1,9 +1,10 @@
 ﻿using DAL.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Context;
 
-public partial class MovieMVCContext : DbContext
+public partial class MovieMVCContext : IdentityDbContext
 {
     public MovieMVCContext ()
     {
@@ -30,6 +31,9 @@ public partial class MovieMVCContext : DbContext
 
             entity.Property(e => e.Title).HasMaxLength(100);
         });
+
+        // Configure identity table by default
+        base.OnModelCreating(modelBuilder);
 
         OnModelCreatingPartial(modelBuilder);
     }
