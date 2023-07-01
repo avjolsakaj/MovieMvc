@@ -12,6 +12,7 @@ public class MovieViewModel
 
     [Required(ErrorMessage = "Release Date is required")]
     [DataType(DataType.Date)]
+    [Display(Name = "Release Date")]
     public DateTime ReleaseDate { get; set; }
 
     [StringLength(20, MinimumLength = 1)]
