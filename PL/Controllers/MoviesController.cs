@@ -15,9 +15,9 @@ public class MoviesController : Controller
     }
 
     // GET: MoviesController
-    public async Task<IActionResult> Index ()
+    public async Task<IActionResult> Index (string searchString, string genreSearch)
     {
-        var movies = await _movieRepository.GetAll();
+        var movies = await _movieRepository.GetAll(searchString, genreSearch);
 
         if (movies == null)
         {

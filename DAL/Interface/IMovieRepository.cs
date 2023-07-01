@@ -4,7 +4,7 @@ namespace DAL.Interface;
 
 public interface IMovieRepository
 {
-    Task<List<Movie>?> GetAll ();
+    Task<List<Movie>?> GetAll (string search, string genre);
 
     Task<Movie?> Get (int id);
 

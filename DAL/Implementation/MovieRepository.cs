@@ -21,11 +21,41 @@ public class MovieRepository : IMovieRepository
         return movie;
     }
 
-    public async Task<List<Movie>?> GetAll ()
+    public async Task<List<Movie>?> GetAll (string search, string genre)
     {
-        var movies = await _context.Movies.ToListAsync();
+        var moviesQuery = _context.Movies.AsQueryable();
 
-        return movies;
+        if (!string.IsNullOrEmpty(search))
+        {
+            // Filter movie by this search string
+            moviesQuery = moviesQuery
+                .Where(x => x.Title.Contains(search));
+        }
+
+        if (!string.IsNullOrEmpty(genre))
+        {
+            // Filter movie by this genre string
+            moviesQuery = moviesQuery
+                .Where(x => x.Genre != null && x.Genre.Contains(genre));
+        }
+
+        return await moviesQuery
+            .OrderBy(x => x.Title)
+            .ToListAsync();
+
+        //if (!string.IsNullOrEmpty(search))
+        //{
+        //    // Filter movie by this search string
+        //    return await _context.Movies
+        //        .Where(x => x.Title.Contains(search)
+        //                    || (x.Genre != null && x.Genre.Contains(search)))
+        //        .OrderBy(x => x.Title)
+        //        .ToListAsync();
+        //}
+
+        //return await _context.Movies
+        //    .OrderBy(x => x.Title)
+        //    .ToListAsync();
     }
 
     public async Task<int> SaveChanges ()
