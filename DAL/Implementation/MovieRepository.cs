@@ -74,4 +74,14 @@ public class MovieRepository : IMovieRepository
     {
         _context.Movies.Remove(movie);
     }
+
+    public async Task<List<string>> GetListOfGenres ()
+    {
+        // Unique list of genres
+        return await _context.Movies
+            .Select(x => x.Genre ?? string.Empty)
+            .Where(x => !string.IsNullOrEmpty(x))
+            .Distinct()
+            .ToListAsync();
+    }
 }

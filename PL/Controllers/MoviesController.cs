@@ -29,6 +29,8 @@ public class MoviesController : Controller
 
         var result = movies.ConvertAll(x => x.Map());
 
+        ViewBag.GenreList = await _movieRepository.GetListOfGenres();
+
         return View(result);
     }
 

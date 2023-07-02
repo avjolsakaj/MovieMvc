@@ -13,4 +13,6 @@ public interface IMovieRepository
     Movie Add (Movie movie);
 
     void Delete (Movie movie);
+
+    Task<List<string>> GetListOfGenres ();
 }
